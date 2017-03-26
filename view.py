@@ -1,10 +1,11 @@
 import pygame
 import sys
 
-from Stone import Stone
-from Board import Board
-from Vector2 import Vector2
-from StoneColor import StoneColor
+from stone import Stone
+from board import Board
+from vector2 import Vector2
+from stone_color import StoneColor
+
 
 class View:
     def __init__(self):
@@ -21,7 +22,7 @@ class View:
         self.lines_width = 2
         self.frame_width = self.pixels_per_square / 2
 
-        self.screen_size = (self.size - 1)*self.pixels_per_square + 2*self.frame_width
+        self.screen_size = (self.size - 1) * self.pixels_per_square + 2 * self.frame_width
         self.screen = pygame.display.set_mode((self.screen_size, self.screen_size))
 
         self.draw_board(None)
@@ -29,17 +30,17 @@ class View:
     def draw_board(self, board):
         self.screen.fill(self.background_color)
         for i in range(self.size):
-                pygame.draw.line(self.screen,
-                                 self.lines_color,
-                                 [i*self.pixels_per_square + self.frame_width, self.frame_width],
-                                 [i*self.pixels_per_square + self.frame_width, self.screen_size - self.frame_width],
-                                 self.lines_width)
+            pygame.draw.line(self.screen,
+                             self.lines_color,
+                             [i * self.pixels_per_square + self.frame_width, self.frame_width],
+                             [i * self.pixels_per_square + self.frame_width, self.screen_size - self.frame_width],
+                             self.lines_width)
 
         for i in range(self.size):
             pygame.draw.line(self.screen,
                              self.lines_color,
-                             [self.frame_width, i*self.pixels_per_square + self.frame_width],
-                             [self.screen_size - self.frame_width, i*self.pixels_per_square + self.frame_width],
+                             [self.frame_width, i * self.pixels_per_square + self.frame_width],
+                             [self.screen_size - self.frame_width, i * self.pixels_per_square + self.frame_width],
                              self.lines_width)
 
         if board is not None:
@@ -51,9 +52,9 @@ class View:
                         normalized_color = self.get_normalized_color(color)
                         pygame.draw.circle(self.screen,
                                            normalized_color,
-                                           [i*self.pixels_per_square + self.frame_width,
-                                            j*self.pixels_per_square + self.frame_width],
-                                           self.pixels_per_square/3,
+                                           [i * self.pixels_per_square + self.frame_width,
+                                            j * self.pixels_per_square + self.frame_width],
+                                           self.pixels_per_square / 3,
                                            self.circle_width)
 
         pygame.display.flip()
@@ -69,6 +70,7 @@ class View:
             return self.black_color
         else:
             return self.white_color
+
 
 # TODO move to main game loop
 view = View()
@@ -86,4 +88,3 @@ while True:
             board.place_stone(pos)
             game_board = board.get_board()
             view.draw_board(game_board)
-

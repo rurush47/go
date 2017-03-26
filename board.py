@@ -1,6 +1,6 @@
-from TurnManager import TurnManager
-from Vector2 import Vector2
-from Stone import Stone
+from turn_manager import TurnManager
+from vector2 import Vector2
+from stone import Stone
 
 
 class Board:

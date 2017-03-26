@@ -1,4 +1,4 @@
-from StoneColor import StoneColor
+from stone_color import StoneColor
 
 
 class TurnManager:
