@@ -1,3 +1,4 @@
+from TurnManager import TurnManager
 from Vector2 import Vector2
 from Stone import Stone
 
@@ -8,19 +9,24 @@ class Board:
     def __init__(self):
         # create 2D array
         self.board = [[0 for i in range(Board.size)] for j in range(Board.size)]
+        self.turn_manager = TurnManager()
 
-    def place_stone(self, position, color):
+    def place_stone(self, position):
         # TODO checks
         try:
-            self.board[position.x][position.y] = Stone(color)
+            self.board[position.x][position.y] = Stone(self.turn_manager.get_current_player_color())
+            self.next_turn()
         except IndexError:
             print 'Dude board is too fucking small!'
+
+    def next_turn(self):
+        self.turn_manager.next_turn()
 
     def is_empty(self, position):
         return True if self.board[position.x][position.y] == 0 else False
 
     def liberties_count(self, position, color):
-        #TODO
+        # TODO
         pass
 
     @staticmethod
@@ -37,3 +43,6 @@ class Board:
                 return None
             else:
                 return stone
+
+    def get_board(self):
+        return self.board

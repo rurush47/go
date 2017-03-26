@@ -1,6 +1,6 @@
 from aenum import Enum
 
-class Color(Enum):
+
+class StoneColor(Enum):
     WHITE = 1
     BLACK = 2
-

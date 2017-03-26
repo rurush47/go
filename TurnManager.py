@@ -1,12 +1,15 @@
-from Color import Color
+from StoneColor import StoneColor
 
 
 class TurnManager:
     def __init__(self):
-        self.current_turn = Color.BLACK
+        self.current_turn = StoneColor.BLACK
 
     def next_turn(self):
-        self.current_turn = Color.WHITE if self.current_turn == Color.BLACK else self.current_turn = Color.BLACK
+        if self.current_turn is StoneColor.BLACK:
+            self.current_turn = StoneColor.WHITE
+        else:
+            self.current_turn = StoneColor.BLACK
 
     def get_current_player_color(self):
         return self.current_turn
