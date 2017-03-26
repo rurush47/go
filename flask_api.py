@@ -1,6 +1,6 @@
 # coding=utf-8
 from flask import abort, Flask, jsonify, request
-from board import Board
+from Board import Board
 
 
 app = Flask(__name__)
