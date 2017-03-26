@@ -29,6 +29,7 @@ class View:
 
     def draw_board(self, board):
         self.screen.fill(self.background_color)
+        # draw lines
         for i in range(self.size):
             pygame.draw.line(self.screen,
                              self.lines_color,
@@ -43,6 +44,7 @@ class View:
                              [self.screen_size - self.frame_width, i * self.pixels_per_square + self.frame_width],
                              self.lines_width)
 
+        # draw stones
         if board is not None:
             for i in range(self.size):
                 for j in range(self.size):

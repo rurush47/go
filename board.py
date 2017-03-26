@@ -1,5 +1,4 @@
 from turn_manager import TurnManager
-from vector2 import Vector2
 from stone import Stone
 
 
@@ -13,11 +12,12 @@ class Board:
 
     def place_stone(self, position):
         # TODO checks
-        try:
-            self.board[position.x][position.y] = Stone(self.turn_manager.get_current_player_color())
-            self.next_turn()
-        except IndexError:
-            print 'Dude board is too fucking small!'
+        if self.is_empty(position):
+            try:
+                self.board[position.x][position.y] = Stone(self.turn_manager.get_current_player_color())
+                self.next_turn()
+            except IndexError:
+                print 'Dude board is too fucking small!'
 
     def next_turn(self):
         self.turn_manager.next_turn()

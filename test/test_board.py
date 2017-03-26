@@ -1,8 +1,8 @@
 from unittest import TestCase
-from Board import Board
-from Color import Color
-from Vector2 import Vector2
-from Stone import Stone
+from board import Board
+from stone_color import StoneColor
+from vector2 import Vector2
+from stone import Stone
 
 
 class TestBoard(TestCase):
@@ -15,7 +15,7 @@ class TestBoard(TestCase):
         pos1 = Vector2(2, 3)
         pos2 = Vector2(3, 4)
 
-        b.board[2][3] = Stone(Color.BLACK)
+        b.board[2][3] = Stone(StoneColor.BLACK)
 
         self.assertEquals(b.is_empty(pos1), False)
         self.assertEquals(b.is_empty(pos2), True)
@@ -40,7 +40,7 @@ class TestBoard(TestCase):
         pos1 = Vector2(2, 3)
         pos2 = Vector2(3, 5)
 
-        stone = Stone(Color.BLACK)
+        stone = Stone(StoneColor.BLACK)
         b.board[2][3] = stone
 
         color = stone.get_color()
