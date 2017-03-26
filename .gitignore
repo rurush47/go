@@ -135,3 +135,6 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
+#JetBrains IDE
+.idea/
+
