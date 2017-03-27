@@ -52,7 +52,7 @@ class Board:
             if stone is not None and stone.get_color() is color:
                 stones_list.append(stone)
 
-
+        return stones_list
 
     @staticmethod
     def in_bounds(position):
@@ -64,7 +64,7 @@ class Board:
     def get_stone_at_position(self, position):
         if self.in_bounds(position):
             stone = self.board[position.x][position.y]
-            if type(stone) is not Stone or stone is None:
+            if not isinstance(stone, Stone) or stone is None:
                 return None
             else:
                 return stone
@@ -74,4 +74,5 @@ class Board:
 
     def get_surrounding_points_list(self, position):
         points_to_check = [position + self.up, position + self.left, position + self.right, position + self.down]
+        points_to_check = filter(lambda x: self.in_bounds(x), points_to_check)
         return points_to_check

@@ -21,7 +21,19 @@ class TestBoard(TestCase):
         self.assertEquals(b.is_empty(pos2), True)
 
     def test_liberties_count(self):
-        self.fail()
+        Board.size = 9
+        b = Board()
+        board = b.get_board()
+
+        board[5][5] = Stone(StoneColor.BLACK)
+        board[5][6] = Stone(StoneColor.BLACK)
+        board[6][5] = Stone(StoneColor.BLACK)
+        board[5][4] = Stone(StoneColor.BLACK)
+
+        pos = Vector2(5, 5)
+        count = b.liberties_count(pos)
+
+        self.assertEquals(count, 1)
 
     def test_in_bounds(self):
         Board.size = 9
@@ -52,3 +64,34 @@ class TestBoard(TestCase):
 
         self.assertEquals(color, stone1.get_color())
         self.assertEquals(stone2, None)
+
+    def test_get_neighbors_of_color(self):
+        Board.size = 9
+        b = Board()
+        board = b.get_board()
+
+        board[5][5] = Stone(StoneColor.BLACK)
+        board[5][6] = Stone(StoneColor.BLACK)
+        board[6][5] = Stone(StoneColor.BLACK)
+        board[5][4] = Stone(StoneColor.BLACK)
+        board[4][5] = Stone(StoneColor.WHITE)
+
+        pos = Vector2(5, 5)
+        neigh_list_black = b.get_neighbors_of_color(pos, StoneColor.BLACK)
+        neigh_list_white = b.get_neighbors_of_color(pos, StoneColor.WHITE)
+
+        self.assertEquals(len(neigh_list_black), 3)
+        self.assertEquals(len(neigh_list_white), 1)
+
+    def test_get_surrounding_points_list(self):
+        Board.size = 9
+        b = Board()
+
+        pos1 = Vector2(0, 0)
+        pos2 = Vector2(5, 5)
+
+        list1 = b.get_surrounding_points_list(pos1)
+        list2 = b.get_surrounding_points_list(pos2)
+
+        self.assertEquals(len(list1), 2)
+        self.assertEquals(len(list2), 4)
