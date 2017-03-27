@@ -1,3 +1,4 @@
+from stone_color import StoneColor
 from turn_manager import TurnManager
 from stone import Stone
 from vector2 import Vector2
@@ -19,12 +20,51 @@ class Board:
     def place_stone(self, position):
         # TODO checks
         color = self.turn_manager.get_current_player_color()
-        if self.is_empty(position) and self.liberties_count(position) is not 0 and self.get_neighbors_of_color():
-            try:
-                self.board[position.x][position.y] = Stone(color)
-                self.next_turn()
-            except IndexError:
-                print 'Dude board is too fucking small!'
+        if self.in_bounds(position) and self.is_empty(position):
+            if self.liberties_count(position) is not 0:
+                self.board[position.x][position.y] = Stone(color, position)
+            else:
+                # place temporary stone to check if it's possible to take prisoners
+                tmp_stone = Stone(color)
+                self.board[position.x][position.y] = Stone(color, position)
+            # continue
+            hostile_stones_list = self.get_neighbors_of_color(position, StoneColor.get_opposite(color))
+            if hostile_stones_list is not None:
+                stones_to_be_deleted = set()
+                for stone in hostile_stones_list:
+                    stones_string = self.get_dead_stones_string(stone.position, stone.color)
+                    if stones_string is not None:
+                        stones_to_be_deleted.update(stones_string)
+                for stone in stones_to_be_deleted:
+                    self.delete_stone(stone.position)
+
+            self.next_turn()
+
+    def get_dead_stones_string(self, position, color):
+        # if string doesn't have any liberties return it else return None
+        string = set()
+        string.add(self.get_stone_at_position(position))
+        string.update(self.get_neighbors_of_color(position, color))
+        count = len(string)
+        if count is 0:
+            return None
+        new_stones = string.copy()
+        while True:
+            for stone in new_stones:
+                liberties_count = self.liberties_count(stone.position)
+                if liberties_count is not 0:
+                    return None
+            new_set = set()
+            for stone in new_stones:
+                new_set.update(self.get_neighbors_of_color(stone.position, color))
+                string.update(new_set)
+            new_count = len(string)
+            if new_count == count:
+                break
+            new_stones = new_set
+            count = new_count
+
+        return string
 
     def next_turn(self):
         self.turn_manager.next_turn()
@@ -76,3 +116,6 @@ class Board:
         points_to_check = [position + self.up, position + self.left, position + self.right, position + self.down]
         points_to_check = filter(lambda x: self.in_bounds(x), points_to_check)
         return points_to_check
+
+    def delete_stone(self, position):
+        self.board[position.x][position.y] = 0

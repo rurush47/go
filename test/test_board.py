@@ -95,3 +95,55 @@ class TestBoard(TestCase):
 
         self.assertEquals(len(list1), 2)
         self.assertEquals(len(list2), 4)
+
+    def test_get_dead_stones_string(self):
+        Board.size = 9
+        b = Board()
+        board = b.get_board()
+
+        # x
+        # 0x
+        # 00x
+
+        board[0][0] = Stone(StoneColor.BLACK, Vector2(0, 0))
+        board[0][1] = Stone(StoneColor.BLACK, Vector2(0, 1))
+        board[1][0] = Stone(StoneColor.BLACK, Vector2(1, 0))
+        board[0][2] = Stone(StoneColor.WHITE, Vector2(0, 2))
+        board[1][1] = Stone(StoneColor.WHITE, Vector2(1, 1))
+        board[2][0] = Stone(StoneColor.WHITE, Vector2(2, 0))
+
+        #   00
+        #  0xx0
+        # 0xxx0
+        # 0xxx0
+        # 0000
+
+        board[5][5] = Stone(StoneColor.BLACK, Vector2(5, 5))
+        board[6][5] = Stone(StoneColor.BLACK, Vector2(6, 5))
+        board[4][5] = Stone(StoneColor.BLACK, Vector2(4, 5))
+        board[6][6] = Stone(StoneColor.BLACK, Vector2(6, 6))
+        board[5][6] = Stone(StoneColor.BLACK, Vector2(5, 6))
+        board[4][6] = Stone(StoneColor.BLACK, Vector2(4, 6))
+        board[5][7] = Stone(StoneColor.BLACK, Vector2(5, 7))
+        board[6][7] = Stone(StoneColor.BLACK, Vector2(6, 7))
+
+        board[3][4] = Stone(StoneColor.WHITE, Vector2(3, 4))
+        board[3][5] = Stone(StoneColor.WHITE, Vector2(3, 5))
+        board[3][6] = Stone(StoneColor.WHITE, Vector2(3, 6))
+        board[4][4] = Stone(StoneColor.WHITE, Vector2(4, 4))
+        board[4][7] = Stone(StoneColor.WHITE, Vector2(4, 7))
+        board[5][4] = Stone(StoneColor.WHITE, Vector2(5, 4))
+        board[5][8] = Stone(StoneColor.WHITE, Vector2(5, 8))
+        board[6][4] = Stone(StoneColor.WHITE, Vector2(6, 4))
+        board[6][8] = Stone(StoneColor.WHITE, Vector2(6, 8))
+        board[7][5] = Stone(StoneColor.WHITE, Vector2(7, 5))
+        board[7][6] = Stone(StoneColor.WHITE, Vector2(7, 6))
+        board[7][7] = Stone(StoneColor.WHITE, Vector2(7, 7))
+
+        pos = Vector2(0, 0)
+        pos2 = Vector2(5, 5)
+        list1 = b.get_dead_stones_string(pos, StoneColor.BLACK)
+        list2 = b.get_dead_stones_string(pos2, StoneColor.BLACK)
+
+        self.assertEquals(len(list1), 3)
+        self.assertEquals(len(list2), 8)
