@@ -1,5 +1,5 @@
 class Stone:
-    def __init__(self, color, position = None):
+    def __init__(self, color, position=None):
         self.color = color
         self.position = position
 

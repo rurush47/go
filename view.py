@@ -16,8 +16,8 @@ class View:
         self.pixels_per_square = 50
         self.background_color = (50, 50, 50)
         self.lines_color = (80, 80, 80)
-        self.white_color = (0, 0, 0)
-        self.black_color = (255, 255, 255)
+        self.white_color = (255, 255, 255)
+        self.black_color = (0, 0, 0)
         self.circle_width = 2
         self.lines_width = 2
         self.frame_width = self.pixels_per_square / 2
@@ -28,6 +28,7 @@ class View:
         self.draw_board(None)
 
     def draw_board(self, board):
+
         self.screen.fill(self.background_color)
         # draw lines
         for i in range(self.size):
@@ -87,6 +88,6 @@ while True:
             click_pos = pygame.mouse.get_pos()
             pos = view.get_normalized_click_pos(click_pos)
             print str(pos.x) + ' ' + str(pos.y)
-            board.place_stone(pos)
+            board.make_move(pos)
             game_board = board.get_board()
             view.draw_board(game_board)

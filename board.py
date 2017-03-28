@@ -1,3 +1,4 @@
+from state_history import StateHistory
 from stone_color import StoneColor
 from turn_manager import TurnManager
 from stone import Stone
@@ -16,31 +17,40 @@ class Board:
         # create 2D array
         self.board = [[0 for i in range(Board.size)] for j in range(Board.size)]
         self.turn_manager = TurnManager()
+        self.state_history = StateHistory()
 
-    def place_stone(self, position):
-        # TODO checks
+    def make_move(self, position):
         color = self.turn_manager.get_current_player_color()
+        # TODO authentication
         if self.in_bounds(position) and self.is_empty(position):
-            if self.liberties_count(position) is not 0:
-                self.board[position.x][position.y] = Stone(color, position)
-            else:
-                # place temporary stone to check if it's possible to take prisoners
-                tmp_stone = Stone(color)
-                self.board[position.x][position.y] = Stone(color, position)
-            # continue
+            # Place a stone on any unoccupied space.
+            new_stone = Stone(color, position)
+            self.board[position.x][position.y] = new_stone
+            # Check if any opposing groups are completely surrounded. If so, remove them and mark them as captured.
             hostile_stones_list = self.get_neighbors_of_color(position, StoneColor.get_opposite(color))
             if hostile_stones_list is not None:
                 stones_to_be_deleted = set()
                 for stone in hostile_stones_list:
-                    stones_string = self.get_dead_stones_string(stone.position, stone.color)
-                    if stones_string is not None:
+                    stones_string = self.get_stones_string(stone.position, stone.color)
+                    if stones_string is not None and self.is_string_dead(stones_string):
                         stones_to_be_deleted.update(stones_string)
                 for stone in stones_to_be_deleted:
                     self.delete_stone(stone.position)
-
+            # Check if any friendly groups are completely surrounded. If so, the move is invalid.
+            friendly_string = self.get_stones_string(position, color)
+            if friendly_string is None or self.is_string_dead(friendly_string):
+                self.delete_stone(new_stone.position)
+                return
+            # Check if the current board state is in the history of states for this game. If so, the move is invalid.
+            state = self.create_state()
+            if self.state_history.is_already_in_history(state):
+                self.delete_stone(new_stone.position)
+                return
+            # If the current board state is valid, add it to the history of states.
+            self.state_history.add_state(state)
             self.next_turn()
 
-    def get_dead_stones_string(self, position, color):
+    def get_stones_string(self, position, color):
         # if string doesn't have any liberties return it else return None
         string = set()
         string.add(self.get_stone_at_position(position))
@@ -50,10 +60,6 @@ class Board:
             return None
         new_stones = string.copy()
         while True:
-            for stone in new_stones:
-                liberties_count = self.liberties_count(stone.position)
-                if liberties_count is not 0:
-                    return None
             new_set = set()
             for stone in new_stones:
                 new_set.update(self.get_neighbors_of_color(stone.position, color))
@@ -65,6 +71,13 @@ class Board:
             count = new_count
 
         return string
+
+    def is_string_dead(self, string):
+        for stone in string:
+            liberties_count = self.liberties_count(stone.position)
+            if liberties_count is not 0:
+                return False
+        return True
 
     def next_turn(self):
         self.turn_manager.next_turn()
@@ -119,3 +132,14 @@ class Board:
 
     def delete_stone(self, position):
         self.board[position.x][position.y] = 0
+
+    def create_state(self):
+        state = [[0 for i in range(Board.size)] for j in range(Board.size)]
+        for i in range(Board.size):
+            for j in range(Board.size):
+                stone = self.board[i][j]
+                if isinstance(stone, Stone):
+                    state[i][j] = stone.color.value
+                else:
+                    state[i][j] = 0
+        return state
