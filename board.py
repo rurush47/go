@@ -37,14 +37,17 @@ class Board:
                 for stone in stones_to_be_deleted:
                     self.delete_stone(stone.position)
             # Check if any friendly groups are completely surrounded. If so, the move is invalid.
+            state = self.create_state()
             friendly_string = self.get_stones_string(position, color)
             if friendly_string is None or self.is_string_dead(friendly_string):
                 self.delete_stone(new_stone.position)
+                self.reverse_removal(stones_to_be_deleted)
                 return
             # Check if the current board state is in the history of states for this game. If so, the move is invalid.
-            state = self.create_state()
+            # 'ko' rule
             if self.state_history.is_already_in_history(state):
                 self.delete_stone(new_stone.position)
+                self.reverse_removal(stones_to_be_deleted)
                 return
             # If the current board state is valid, add it to the history of states.
             self.state_history.add_state(state)
@@ -132,6 +135,11 @@ class Board:
 
     def delete_stone(self, position):
         self.board[position.x][position.y] = 0
+
+    def reverse_removal(self, stones):
+        for stone in stones:
+            pos = stone.position
+            self.board[pos.x][pos.y] = stone
 
     def create_state(self):
         state = [[0 for i in range(Board.size)] for j in range(Board.size)]
