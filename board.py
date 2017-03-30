@@ -19,15 +19,16 @@ class Board:
         self.turn_manager = TurnManager()
         self.state_history = StateHistory()
 
-    def make_move(self, position, player):
+    def make_move(self, position):
         color = self.turn_manager.get_current_player_color()
-        if player.color is not color:
-            return
         # TODO authentication
+        # if player.color is not color:
+        #    return
         if position is None:
             self.turn_manager.pass_turn()
             if self.turn_manager.pass_counter >= 2:
                 self.end_game()
+            return
         if self.in_bounds(position) and self.is_empty(position):
             # Place a stone on any unoccupied space.
             new_stone = Stone(color, position)
