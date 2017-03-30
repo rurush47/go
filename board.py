@@ -6,7 +6,7 @@ from vector2 import Vector2
 
 
 class Board:
-    size = 9
+    size = 4
 
     up = Vector2(0, 1)
     down = Vector2(0, -1)
@@ -19,9 +19,15 @@ class Board:
         self.turn_manager = TurnManager()
         self.state_history = StateHistory()
 
-    def make_move(self, position):
+    def make_move(self, position, player):
         color = self.turn_manager.get_current_player_color()
+        if player.color is not color:
+            return
         # TODO authentication
+        if position is None:
+            self.turn_manager.pass_turn()
+            if self.turn_manager.pass_counter >= 2:
+                self.end_game()
         if self.in_bounds(position) and self.is_empty(position):
             # Place a stone on any unoccupied space.
             new_stone = Stone(color, position)
@@ -86,7 +92,7 @@ class Board:
         self.turn_manager.next_turn()
 
     def is_empty(self, position):
-        return True if self.board[position.x][position.y] == 0 else False
+        return True if self.board[position.x][position.y] == StoneColor.EMPTY.value else False
 
     def liberties_count(self, position):
         count = 0
@@ -151,3 +157,19 @@ class Board:
                 else:
                     state[i][j] = 0
         return state
+
+    def end_game(self):
+        pass
+
+    def count_score(self):
+        white_score = 0
+        black_score = 0
+        for i in range(Board.size):
+            for j in range(Board.size):
+                stone = self.board[i][j]
+                if isinstance(stone, Stone):
+                    if stone.color is StoneColor.WHITE:
+                        white_score += 1
+                    else:
+                        black_score += 2
+        return [black_score, white_score]

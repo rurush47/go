@@ -142,8 +142,8 @@ class TestBoard(TestCase):
 
         pos = Vector2(0, 0)
         pos2 = Vector2(5, 5)
-        list1 = b.get_dead_stones_string(pos, StoneColor.BLACK)
-        list2 = b.get_dead_stones_string(pos2, StoneColor.BLACK)
+        list1 = b.get_stones_string(pos, StoneColor.BLACK)
+        list2 = b.get_stones_string(pos2, StoneColor.BLACK)
 
         self.assertEquals(len(list1), 3)
         self.assertEquals(len(list2), 8)
