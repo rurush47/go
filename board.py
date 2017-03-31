@@ -1,3 +1,5 @@
+import copy
+
 from state_history import StateHistory
 from stone_color import StoneColor
 from turn_manager import TurnManager
@@ -6,7 +8,7 @@ from vector2 import Vector2
 
 
 class Board:
-    size = 4
+    size = 6
 
     up = Vector2(0, 1)
     down = Vector2(0, -1)
@@ -18,6 +20,7 @@ class Board:
         self.board = [[0 for i in range(Board.size)] for j in range(Board.size)]
         self.turn_manager = TurnManager()
         self.state_history = StateHistory()
+        self.state_history.add_state(self.create_state())
 
     def make_move(self, position):
         color = self.turn_manager.get_current_player_color()
@@ -29,41 +32,46 @@ class Board:
             if self.turn_manager.pass_counter >= 2:
                 self.end_game()
             return
+        state_after_move = self.get_state(position, color)
+        if state_after_move is not None:
+            # If the current board state is valid, add it to the history of states.
+            self.state_history.add_state(state_after_move)
+            self.next_turn()
+
+    # returns None if move is invalid else returns state after correct move
+    def get_state(self, position, color):
         if self.in_bounds(position) and self.is_empty(position):
             # Place a stone on any unoccupied space.
-            new_stone = Stone(color, position)
-            self.board[position.x][position.y] = new_stone
+            self.board[position.x][position.y] = color.value
             # Check if any opposing groups are completely surrounded. If so, remove them and mark them as captured.
             hostile_stones_list = self.get_neighbors_of_color(position, StoneColor.get_opposite(color))
             if hostile_stones_list is not None:
                 stones_to_be_deleted = set()
                 for stone in hostile_stones_list:
-                    stones_string = self.get_stones_string(stone.position, stone.color)
+                    stones_string = self.get_stones_string(stone, StoneColor.get_opposite(color))
                     if stones_string is not None and self.is_string_dead(stones_string):
                         stones_to_be_deleted.update(stones_string)
                 for stone in stones_to_be_deleted:
-                    self.delete_stone(stone.position)
+                    self.delete_stone(stone)
             # Check if any friendly groups are completely surrounded. If so, the move is invalid.
-            state = self.create_state()
-            friendly_string = self.get_stones_string(position, color)
-            if friendly_string is None or self.is_string_dead(friendly_string):
-                self.delete_stone(new_stone.position)
-                self.reverse_removal(stones_to_be_deleted)
-                return
             # Check if the current board state is in the history of states for this game. If so, the move is invalid.
             # 'ko' rule
-            if self.state_history.is_already_in_history(state):
-                self.delete_stone(new_stone.position)
-                self.reverse_removal(stones_to_be_deleted)
-                return
-            # If the current board state is valid, add it to the history of states.
-            self.state_history.add_state(state)
-            self.next_turn()
+            state = self.create_state()
+            friendly_string = self.get_stones_string(position, color)
+            if friendly_string is None or self.is_string_dead(friendly_string) \
+                    or self.state_history.is_already_in_history(state):
+                self.load_last_state()
+                return None
+            return state
+        return None
+
+    def load_last_state(self):
+        self.board = copy.deepcopy(self.state_history.get_last_state())
 
     def get_stones_string(self, position, color):
         # if string doesn't have any liberties return it else return None
         string = set()
-        string.add(self.get_stone_at_position(position))
+        string.add(position)
         string.update(self.get_neighbors_of_color(position, color))
         count = len(string)
         if count is 0:
@@ -72,7 +80,7 @@ class Board:
         while True:
             new_set = set()
             for stone in new_stones:
-                new_set.update(self.get_neighbors_of_color(stone.position, color))
+                new_set.update(self.get_neighbors_of_color(stone, color))
                 string.update(new_set)
             new_count = len(string)
             if new_count == count:
@@ -84,7 +92,7 @@ class Board:
 
     def is_string_dead(self, string):
         for stone in string:
-            liberties_count = self.liberties_count(stone.position)
+            liberties_count = self.liberties_count(stone)
             if liberties_count is not 0:
                 return False
         return True
@@ -111,10 +119,8 @@ class Board:
         surrounding_positions = self.get_surrounding_points_list(position)
 
         for i in surrounding_positions:
-            stone = self.get_stone_at_position(i)
-            if stone is not None and stone.get_color() is color:
-                stones_list.append(stone)
-
+            if self.board[i.x][i.y] is color.value:
+                stones_list.append(i)
         return stones_list
 
     @staticmethod
@@ -127,10 +133,10 @@ class Board:
     def get_stone_at_position(self, position):
         if self.in_bounds(position):
             stone = self.board[position.x][position.y]
-            if not isinstance(stone, Stone) or stone is None:
-                return None
-            else:
+            if stone is not StoneColor.EMPTY.value:
                 return stone
+            else:
+                return None
 
     def get_board(self):
         return self.board
@@ -149,14 +155,7 @@ class Board:
             self.board[pos.x][pos.y] = stone
 
     def create_state(self):
-        state = [[0 for i in range(Board.size)] for j in range(Board.size)]
-        for i in range(Board.size):
-            for j in range(Board.size):
-                stone = self.board[i][j]
-                if isinstance(stone, Stone):
-                    state[i][j] = stone.color.value
-                else:
-                    state[i][j] = 0
+        state = copy.deepcopy(self.board)
         return state
 
     def end_game(self):
@@ -174,3 +173,12 @@ class Board:
                     else:
                         black_score += 2
         return [black_score, white_score]
+
+    def valid_states_generator(self, color):
+        for i in range(Board.size):
+            for j in range(Board.size):
+                position = Vector2(i, j)
+                state = self.get_state(position, color)
+                self.load_last_state()
+                if state is not None:
+                    yield [position, state]
