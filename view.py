@@ -1,7 +1,4 @@
 import pygame
-import sys
-
-from stone import Stone
 from board import Board
 from vector2 import Vector2
 from stone_color import StoneColor
