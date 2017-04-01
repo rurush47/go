@@ -3,7 +3,6 @@ import copy
 from state_history import StateHistory
 from stone_color import StoneColor
 from turn_manager import TurnManager
-from stone import Stone
 from vector2 import Vector2
 
 
@@ -167,11 +166,10 @@ class Board:
         for i in range(Board.size):
             for j in range(Board.size):
                 stone = self.board[i][j]
-                if isinstance(stone, Stone):
-                    if stone.color is StoneColor.WHITE:
-                        white_score += 1
-                    else:
-                        black_score += 2
+                if stone is StoneColor.WHITE.value:
+                    white_score += 1
+                elif stone is StoneColor.BLACK.value:
+                    black_score += 1
         return [black_score, white_score]
 
     def valid_states_generator(self, color):
