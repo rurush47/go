@@ -1,12 +1,20 @@
 # TODO move to main game loop
 import pygame
 import sys
+import thread
 
 from board import Board
 from view import View
+from flask_api import app
+
+def flask_thread():
+    app.run(host='0.0.0.0', port=5000, debug=False)
 
 view = View()
 board = Board()
+app.view = view
+app.board = board
+thread.start_new_thread(flask_thread,())
 
 while True:
     for event in pygame.event.get():
