@@ -7,7 +7,6 @@ from view import View
 board = Board()
 view = View()
 
-
 while True:
     for event in pygame.event.get():
         pressed = pygame.key.get_pressed()
