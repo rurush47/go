@@ -9,6 +9,7 @@ from vector2 import Vector2
 app = Flask(__name__)
 
 app.player_ids = {}
+
 @app.route("/sync", methods=['GET'])
 def sync():
     players_online = len(app.player_ids)

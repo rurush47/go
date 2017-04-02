@@ -47,7 +47,7 @@ class View:
             for i in range(self.size):
                 for j in range(self.size):
                     stone = board[i][j]
-                    if stone is not StoneColor.EMPTY.value:
+                    if stone is not StoneColor.EMPTY:
                         color = self.get_normalized_color(stone)
                         pygame.draw.circle(self.screen,
                                            color,
@@ -65,7 +65,7 @@ class View:
         return vector2
 
     def get_normalized_color(self, color):
-        if color is StoneColor.BLACK.value:
+        if color is StoneColor.BLACK:
             return self.black_color
         else:
             return self.white_color
