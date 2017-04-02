@@ -1,9 +1,12 @@
+import copy
+
+
 class StateHistory:
     def __init__(self):
         self.states = []
 
     def add_state(self, state):
-        self.states.append(state)
+        self.states.append(copy.deepcopy(state))
         if len(self.states) > 2:
             self.states.pop(0)
 
