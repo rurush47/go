@@ -2,12 +2,11 @@ from unittest import TestCase
 from board import Board
 from stone_color import StoneColor
 from vector2 import Vector2
-from stone import Stone
 
 
 class TestBoard(TestCase):
     def test_place_stone(self):
-        self.fail()
+        self.fail() #WHY RURKU ?
 
     def test_is_empty(self):
         Board.size = 9
@@ -15,7 +14,7 @@ class TestBoard(TestCase):
         pos1 = Vector2(2, 3)
         pos2 = Vector2(3, 4)
 
-        b.board[2][3] = Stone(StoneColor.BLACK)
+        b.board[2][3] = StoneColor.BLACK
 
         self.assertEquals(b.is_empty(pos1), False)
         self.assertEquals(b.is_empty(pos2), True)
@@ -25,10 +24,10 @@ class TestBoard(TestCase):
         b = Board()
         board = b.get_board()
 
-        board[5][5] = Stone(StoneColor.BLACK)
-        board[5][6] = Stone(StoneColor.BLACK)
-        board[6][5] = Stone(StoneColor.BLACK)
-        board[5][4] = Stone(StoneColor.BLACK)
+        board[5][5] = StoneColor.BLACK
+        board[5][6] = StoneColor.BLACK
+        board[6][5] = StoneColor.BLACK
+        board[5][4] = StoneColor.BLACK
 
         pos = Vector2(5, 5)
         count = b.liberties_count(pos)
@@ -52,17 +51,15 @@ class TestBoard(TestCase):
         pos1 = Vector2(2, 3)
         pos2 = Vector2(3, 5)
 
-        stone = Stone(StoneColor.BLACK)
+        stone = StoneColor.BLACK
         b.board[2][3] = stone
 
-        color = stone.get_color()
         stone1 = b.get_stone_at_position(pos1)
 
         print stone1
 
         stone2 = b.get_stone_at_position(pos2)
 
-        self.assertEquals(color, stone1.get_color())
         self.assertEquals(stone2, None)
 
     def test_get_neighbors_of_color(self):
@@ -70,11 +67,11 @@ class TestBoard(TestCase):
         b = Board()
         board = b.get_board()
 
-        board[5][5] = Stone(StoneColor.BLACK)
-        board[5][6] = Stone(StoneColor.BLACK)
-        board[6][5] = Stone(StoneColor.BLACK)
-        board[5][4] = Stone(StoneColor.BLACK)
-        board[4][5] = Stone(StoneColor.WHITE)
+        board[5][5] = StoneColor.BLACK
+        board[5][6] = StoneColor.BLACK
+        board[6][5] = StoneColor.BLACK
+        board[5][4] = StoneColor.BLACK
+        board[4][5] = StoneColor.WHITE
 
         pos = Vector2(5, 5)
         neigh_list_black = b.get_neighbors_of_color(pos, StoneColor.BLACK)
@@ -105,12 +102,12 @@ class TestBoard(TestCase):
         # 0x
         # 00x
 
-        board[0][0] = Stone(StoneColor.BLACK, Vector2(0, 0))
-        board[0][1] = Stone(StoneColor.BLACK, Vector2(0, 1))
-        board[1][0] = Stone(StoneColor.BLACK, Vector2(1, 0))
-        board[0][2] = Stone(StoneColor.WHITE, Vector2(0, 2))
-        board[1][1] = Stone(StoneColor.WHITE, Vector2(1, 1))
-        board[2][0] = Stone(StoneColor.WHITE, Vector2(2, 0))
+        board[0][0] = StoneColor.BLACK
+        board[0][1] = StoneColor.BLACK
+        board[1][0] = StoneColor.BLACK
+        board[0][2] = StoneColor.WHITE
+        board[1][1] = StoneColor.WHITE
+        board[2][0] = StoneColor.WHITE
 
         #   00
         #  0xx0
@@ -118,27 +115,27 @@ class TestBoard(TestCase):
         # 0xxx0
         # 0000
 
-        board[5][5] = Stone(StoneColor.BLACK, Vector2(5, 5))
-        board[6][5] = Stone(StoneColor.BLACK, Vector2(6, 5))
-        board[4][5] = Stone(StoneColor.BLACK, Vector2(4, 5))
-        board[6][6] = Stone(StoneColor.BLACK, Vector2(6, 6))
-        board[5][6] = Stone(StoneColor.BLACK, Vector2(5, 6))
-        board[4][6] = Stone(StoneColor.BLACK, Vector2(4, 6))
-        board[5][7] = Stone(StoneColor.BLACK, Vector2(5, 7))
-        board[6][7] = Stone(StoneColor.BLACK, Vector2(6, 7))
+        board[5][5] = StoneColor.BLACK
+        board[6][5] = StoneColor.BLACK
+        board[4][5] = StoneColor.BLACK
+        board[6][6] = StoneColor.BLACK
+        board[5][6] = StoneColor.BLACK
+        board[4][6] = StoneColor.BLACK
+        board[5][7] = StoneColor.BLACK
+        board[6][7] = StoneColor.BLACK
 
-        board[3][4] = Stone(StoneColor.WHITE, Vector2(3, 4))
-        board[3][5] = Stone(StoneColor.WHITE, Vector2(3, 5))
-        board[3][6] = Stone(StoneColor.WHITE, Vector2(3, 6))
-        board[4][4] = Stone(StoneColor.WHITE, Vector2(4, 4))
-        board[4][7] = Stone(StoneColor.WHITE, Vector2(4, 7))
-        board[5][4] = Stone(StoneColor.WHITE, Vector2(5, 4))
-        board[5][8] = Stone(StoneColor.WHITE, Vector2(5, 8))
-        board[6][4] = Stone(StoneColor.WHITE, Vector2(6, 4))
-        board[6][8] = Stone(StoneColor.WHITE, Vector2(6, 8))
-        board[7][5] = Stone(StoneColor.WHITE, Vector2(7, 5))
-        board[7][6] = Stone(StoneColor.WHITE, Vector2(7, 6))
-        board[7][7] = Stone(StoneColor.WHITE, Vector2(7, 7))
+        board[3][4] = StoneColor.WHITE
+        board[3][5] = StoneColor.WHITE
+        board[3][6] = StoneColor.WHITE
+        board[4][4] = StoneColor.WHITE
+        board[4][7] = StoneColor.WHITE
+        board[5][4] = StoneColor.WHITE
+        board[5][8] = StoneColor.WHITE
+        board[6][4] = StoneColor.WHITE
+        board[6][8] = StoneColor.WHITE
+        board[7][5] = StoneColor.WHITE
+        board[7][6] = StoneColor.WHITE
+        board[7][7] = StoneColor.WHITE
 
         pos = Vector2(0, 0)
         pos2 = Vector2(5, 5)

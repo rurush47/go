@@ -23,25 +23,24 @@ class Board:
 
     def make_move(self, position):
         color = self.turn_manager.get_current_player_color()
-        # TODO authentication
-        # if player.color is not color:
-        #    return
         if position is None:
             self.turn_manager.pass_turn()
             if self.turn_manager.pass_counter >= 2:
                 self.end_game()
-            return
+            return 'you passed'
         state_after_move = self.get_state(position, color)
-        if state_after_move is not None:
-            # If the current board state is valid, add it to the history of states.
-            self.state_history.add_state(state_after_move)
-            self.next_turn()
+        if state_after_move is None:
+            return 'invalid move'
+        # If the current board state is valid, add it to the history of states.
+        self.state_history.add_state(state_after_move)
+        self.next_turn()
+        return None
 
     # returns None if move is invalid else returns state after correct move
     def get_state(self, position, color):
         if self.in_bounds(position) and self.is_empty(position):
             # Place a stone on any unoccupied space.
-            self.board[position.x][position.y] = color.value
+            self.board[position.x][position.y] = color
             # Check if any opposing groups are completely surrounded. If so, remove them and mark them as captured.
             hostile_stones_list = self.get_neighbors_of_color(position, StoneColor.get_opposite(color))
             if hostile_stones_list is not None:
@@ -100,7 +99,7 @@ class Board:
         self.turn_manager.next_turn()
 
     def is_empty(self, position):
-        return True if self.board[position.x][position.y] == StoneColor.EMPTY.value else False
+        return True if self.board[position.x][position.y] == StoneColor.EMPTY else False
 
     def liberties_count(self, position):
         count = 0
@@ -118,7 +117,7 @@ class Board:
         surrounding_positions = self.get_surrounding_points_list(position)
 
         for i in surrounding_positions:
-            if self.board[i.x][i.y] is color.value:
+            if self.board[i.x][i.y] is color:
                 stones_list.append(i)
         return stones_list
 
@@ -132,7 +131,7 @@ class Board:
     def get_stone_at_position(self, position):
         if self.in_bounds(position):
             stone = self.board[position.x][position.y]
-            if stone is not StoneColor.EMPTY.value:
+            if stone is not StoneColor.EMPTY:
                 return stone
             else:
                 return None
@@ -166,9 +165,9 @@ class Board:
         for i in range(Board.size):
             for j in range(Board.size):
                 stone = self.board[i][j]
-                if stone is StoneColor.WHITE.value:
+                if stone is StoneColor.WHITE:
                     white_score += 1
-                elif stone is StoneColor.BLACK.value:
+                elif stone is StoneColor.BLACK:
                     black_score += 1
         return [black_score, white_score]
 
