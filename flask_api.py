@@ -7,7 +7,6 @@ from stone_color import StoneColor
 from vector2 import Vector2
 
 app = Flask(__name__)
-
 app.player_ids = {}
 
 @app.route("/sync", methods=['GET'])

@@ -7,7 +7,7 @@ from vector2 import Vector2
 
 
 class Board:
-    size = 6
+    size = 19
 
     up = Vector2(0, 1)
     down = Vector2(0, -1)
