@@ -6,8 +6,10 @@ import sys
 from board import Board
 from view import View
 from flask_api import app
-
-app.view = View()
-app.board = Board()
-app.view.draw_board(app.board.get_board())
-app.run(host='0.0.0.0', port=5000, debug=False)
+try:
+    app.view = View() #type : View
+    app.board = Board() #type : Board
+    app.view.draw_board(app.board.get_board())
+    app.run(host='0.0.0.0', port=5000, debug=False)
+except :
+    pygame.quit()

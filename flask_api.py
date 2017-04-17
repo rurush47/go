@@ -26,7 +26,7 @@ def get_state():
     if player_id is None or not player_id in app.player_ids:
         abort(418)
     is_your_turn = app.board.turn_manager.current_turn == app.player_ids[player_id]
-    return jsonify(game_sate=app.board.board, is_your_turn=is_your_turn)
+    return jsonify(game_sate=app.board.board, previous_state = app.board.state_history.states, is_your_turn=is_your_turn)
 
 
 # adresujemy od zera z początkiem układu w lewym górnym rogu
