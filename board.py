@@ -40,9 +40,10 @@ class Board:
 
     # returns None if move is invalid else returns state after correct move
     @staticmethod
-    def get_state(state, position, color, previous_states):
-        if Board.in_bounds(state, position) and Board.is_empty(state, position):
+    def get_state(orig_state, position, color, previous_states):
+        if Board.in_bounds(orig_state, position) and Board.is_empty(orig_state, position):
             # Place a stone on any unoccupied space.
+            state = Board.create_state(orig_state)
             state[position.x][position.y] = color
             # Check if any opposing groups are completely surrounded. If so, remove them and mark them as captured.
             hostile_stones_list = Board.get_neighbors_of_color(state, position, StoneColor.get_opposite(color))
@@ -57,7 +58,6 @@ class Board:
             # Check if any friendly groups are completely surrounded. If so, the move is invalid.
             # Check if the current board state is in the history of states for this game. If so, the move is invalid.
             # 'ko' rule
-            state = Board.create_state(state)
             friendly_string = Board.get_stones_string(state, position, color)
             if friendly_string is None or Board.is_string_dead(state, friendly_string) \
                     or state in previous_states:
@@ -183,6 +183,6 @@ class Board:
         for i in range(Board.size):
             for j in range(Board.size):
                 position = Vector2(i, j)
-                state = Board.get_state(state, position, color, previous_states)
-                if state is not None:
-                    yield [position, state]
+                new_state = Board.get_state(state, position, color, previous_states)
+                if new_state is not None:
+                    yield [position, new_state]
