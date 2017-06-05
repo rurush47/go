@@ -9,12 +9,28 @@ class Ai:
 
 	@staticmethod
 	def evaluate(state):
-		return 123 # fixme
+		score = 0
+		for i in range (Board.size):
+			for j in range (Board.size):
+				if state[i][j] == StoneColor.WHITE:
+					score += 1
+				elif state[i][j] == StoneColor.BLACK:
+					score -= 1
+
+		# no counting fully-surrounded empty spots, at least for now
+		# performance is already fairly bad and this would reduce it even more
+
+		return score
+
 
 	def alfa_beta(self, state, color, history, depth, alfa, beta):
 
-		if depth == 0: # or board.is_game_over()
-			return Ai.evaluate(state)
+		if depth == 0:
+			score = Ai.evaluate(state)
+			if self.color == StoneColor.WHITE:
+				return +score
+			else:
+				return -score
 
 		history.append(state)
 		opposite = StoneColor.get_opposite(color)
