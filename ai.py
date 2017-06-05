@@ -1,6 +1,7 @@
 from board import Board
 from vector2 import Vector2
 from stone_color import StoneColor
+import random
 
 class Ai:
 
@@ -52,15 +53,20 @@ class Ai:
 	def get_best_move (self, board, depth):
 
 		alfa = -999999
-		best_position = None
+		best_positions = [[ ]]
 
 		history = board.state_history.get_state_list()
 		opposite = StoneColor.get_opposite(self.color)
 		for pos_state in board.valid_states_generator(board.board, self.color, history):
 			score = self.alfa_beta(pos_state[1], opposite, history, depth - 1, alfa, 999999)
 			if score > alfa:
-				best_position = pos_state[0]
+				best_positions = [[ pos_state[0] ]]
 				alfa = score
+			elif score == alfa:
+				best_positions.append(pos_state[0])
 
-		return best_position
+		if len(best_positions) == 0:
+			return None
+
+		return random.choice(best_positions)
 
