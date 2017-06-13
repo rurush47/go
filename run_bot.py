@@ -27,6 +27,6 @@ while True:
             pos = view.get_normalized_click_pos(click_pos)
             print str(pos.x) + ' ' + str(pos.y)
             board.make_move(pos)
-            board.make_move(ai.get_best_move(board, 2))
+            board.make_move(ai.get_best_move(board, 1))
             game_board = board.get_board()
             view.draw_board(game_board)

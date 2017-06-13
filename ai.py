@@ -3,35 +3,50 @@ from vector2 import Vector2
 from stone_color import StoneColor
 import random
 
-class Ai:
-
-	def __init__ (self, color):
-		self.color = color
+class Evaluators:
+	@staticmethod
+	def freedoms_evaluate(state, color):
+		score = 0
+		for i in range(Board.size):
+			for j in range(Board.size):
+				if state[i][j] == color:
+					score += 1
+				elif state[i][j] == StoneColor.get_opposite(color):
+					score -= 1
+			score -= Board.get_total_liberties_count(state, StoneColor.get_opposite(color), Board.size)
+			score += Board.get_total_liberties_count(state, color, Board.size)
+		return score
 
 	@staticmethod
-	def evaluate(state):
+	def simple_evaluate(state, color):
 		score = 0
-		for i in range (Board.size):
-			for j in range (Board.size):
-				if state[i][j] == StoneColor.WHITE:
+		for i in range(Board.size):
+			for j in range(Board.size):
+				if state[i][j] == color:
 					score += 1
-				elif state[i][j] == StoneColor.BLACK:
+				elif state[i][j] == StoneColor.get_opposite(color):
 					score -= 1
+		return score
+
+
+class Ai:
+
+	def __init__ (self, color, evaluate):
+		self.color = color
+		self.evaluate = evaluate
+
+
 
 		# no counting fully-surrounded empty spots, at least for now
 		# performance is already fairly bad and this would reduce it even more
 
-		return score
+
 
 
 	def alfa_beta(self, state, color, history, depth, alfa, beta):
 
 		if depth == 0:
-			score = Ai.evaluate(state)
-			if self.color == StoneColor.WHITE:
-				return +score
-			else:
-				return -score
+			return self.evaluate(state, color)
 
 		history.append(state)
 		opposite = StoneColor.get_opposite(color)

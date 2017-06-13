@@ -7,7 +7,7 @@ from vector2 import Vector2
 
 
 class Board:
-    size = 19
+    size = 9
 
     up = Vector2(0, 1)
     down = Vector2(0, -1)
@@ -65,6 +65,48 @@ class Board:
             return state
         return None
 
+
+    @staticmethod
+    def get_total_liberties_count(board_state, color, size):
+        def get_stones_string_of_color(state, position, color):
+            # if string doesn't have any liberties return it else return None
+            string = set()
+            string.add(position)
+            string.update(Board.get_neighbors_of_color(state, position, color))
+            count = len(string)
+            if count is 0:
+                return None
+            new_stones = string.copy()
+            while True:
+                new_set = set()
+                for stone in new_stones:
+                    new_set.update(Board.get_neighbors_of_color(state, stone, color))
+                    string.update(new_set)
+                new_count = len(string)
+                if new_count == count:
+                    break
+                new_stones = new_set
+                count = new_count
+
+            return string
+
+        board_copy = copy.deepcopy(board_state)
+        total_liberties = 0
+        for i in range(size):
+            for j in range(size):
+                stone = Vector2(i,j)
+                string = get_stones_string_of_color(board_copy, stone, color)
+                for string_stone in string:
+                    total_liberties += Board.liberties_count(board_copy, string_stone)
+                for string_stone in string:
+                    board_copy[string_stone.x][string_stone.y] = -11
+        return total_liberties
+
+
+
+
+
+
     def load_last_state(self):
         self.board = copy.deepcopy(self.state_history.get_last_state())
 
@@ -109,13 +151,10 @@ class Board:
     @staticmethod
     def liberties_count(state, position):
         count = 0
-
         points_to_check = Board.get_surrounding_points_list(state, position)
-
         for i in points_to_check:
             if Board.in_bounds(state, i) and Board.is_empty(state, i):
                 count += 1
-
         return count
 
     @staticmethod
